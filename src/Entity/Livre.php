@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LivreRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LivreRepository::class)]
@@ -24,6 +26,22 @@ class Livre
 
     #[ORM\Column(length: 190, nullable: true)]
     private ?string $code_isbn = null;
+
+    #[ORM\ManyToMany(targetEntity: Genre::class, mappedBy: 'livres')]
+    private Collection $genres;
+
+    #[ORM\ManyToOne(inversedBy: 'livres')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Auteur $auteurs = null;
+
+    #[ORM\OneToMany(mappedBy: 'livre', targetEntity: Emprunt::class)]
+    private Collection $emprunt;
+
+    public function __construct()
+    {
+        $this->genres = new ArrayCollection();
+        $this->emprunt = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,6 +92,75 @@ class Livre
     public function setCodeIsbn(?string $code_isbn): self
     {
         $this->code_isbn = $code_isbn;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Genre>
+     */
+    public function getGenres(): Collection
+    {
+        return $this->genres;
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genres->contains($genre)) {
+            $this->genres->add($genre);
+            $genre->addLivre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        if ($this->genres->removeElement($genre)) {
+            $genre->removeLivre($this);
+        }
+
+        return $this;
+    }
+
+    public function getAuteurs(): ?Auteur
+    {
+        return $this->auteurs;
+    }
+
+    public function setAuteurs(?Auteur $auteurs): self
+    {
+        $this->auteurs = $auteurs;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Emprunt>
+     */
+    public function getEmprunt(): Collection
+    {
+        return $this->emprunt;
+    }
+
+    public function addEmprunt(Emprunt $emprunt): self
+    {
+        if (!$this->emprunt->contains($emprunt)) {
+            $this->emprunt->add($emprunt);
+            $emprunt->setLivre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmprunt(Emprunt $emprunt): self
+    {
+        if ($this->emprunt->removeElement($emprunt)) {
+            // set the owning side to null (unless already changed)
+            if ($emprunt->getLivre() === $this) {
+                $emprunt->setLivre(null);
+            }
+        }
 
         return $this;
     }
