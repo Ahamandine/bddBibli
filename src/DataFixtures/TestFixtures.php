@@ -1,4 +1,6 @@
 <?php
+// TODO : ADD relation to the entity concerned
+// AND transfer the User and Emprunteur fixtures on AppFixtures.php
 
 namespace App\DataFixtures;
 
@@ -31,10 +33,6 @@ class TestFixtures extends Fixture
         $this->loadEmprunteur($manager, $faker);
         $this->loadLivre($manager, $faker);
         $this->loadUser($manager, $faker);
-        // $product = new Product();
-        // $manager->persist($product);
-
-        $manager->flush();
     }
 
     public function loadAuteur(ObjectManager $manager, FakerGenerator $faker): void 
