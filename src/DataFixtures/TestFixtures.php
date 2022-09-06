@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Auteur;
 use App\Entity\Emprunt;
 use App\Entity\Emprunteur;
+use App\Entity\Genre;
 use App\Entity\Livre;
 use App\Entity\User;
 use DateTime;
@@ -28,7 +29,6 @@ class TestFixtures extends Fixture
         $this->loadAuteur($manager, $faker);
         $this->loadEmprunt($manager, $faker);
         $this->loadEmprunteur($manager, $faker);
-        $this->loadGenres($manager, $faker);
         $this->loadLivre($manager, $faker);
         $this->loadUser($manager, $faker);
         // $product = new Product();
@@ -43,20 +43,20 @@ class TestFixtures extends Fixture
             [
                 'nom' => 'auteur inconnu',
                 'prenom' => ''
-            ]
+            ],
             [
                 'nom' => 'Cartier',
                 'prenom' => 'Hugues'
-            ]
+            ],
             [
                 'nom' => 'Lambert',
                 'prenom' => 'Armand'
-            ]
+            ],
             [
                 'nom' => 'Moitessier',
                 'prenom' => 'Thomas'
             ]
-            ];
+        ];
 
         foreach ($auteurDatas as $auteurData) {
             $auteur = new Auteur();
@@ -68,8 +68,8 @@ class TestFixtures extends Fixture
 
         for($i = 0; $i < 500; $i++) {
             $auteur = new Auteur();
-            $auteur->setLastName({$faker->});
-            $auteur->setFirstName({})
+            $auteur->setLastName($faker->lastName());
+            $auteur->setFirstName($faker->firstName());
             $manager->persist($auteur);
         }
 
@@ -77,24 +77,24 @@ class TestFixtures extends Fixture
 
     }
 
-    public function loadEmprunt(ObjectManager $manager, FakerGenerator $faker): void 
-    {
-        $empruntDatas = 
-        [
-            'date_emprunt' => '2020-02-01 10:00:00',
-            'date_retour' => '2020-02-01 10:00:00'
-        ]
-        [
-            'date_emprunt' => '2020-03-01 10:00:00',
-            'date_retour' => '2020-04-01 10:00:00'
-        ]
-        [
-            'date_emprunt' => '2020-04-01 10:00:00',
-            'date_retour' => ''
-        ]
-        $manager->flush();
+    // public function loadEmprunt(ObjectManager $manager, FakerGenerator $faker): void 
+    // {
+    //     $empruntDatas = 
+    //     [
+    //         'date_emprunt' => '2020-02-01 10:00:00',
+    //         'date_retour' => '2020-02-01 10:00:00'
+    //     ],
+    //     [
+    //         'date_emprunt' => '2020-03-01 10:00:00',
+    //         'date_retour' => '2020-04-01 10:00:00'
+    //     ],
+    //     [
+    //         'date_emprunt' => '2020-04-01 10:00:00',
+    //         'date_retour' => ''
+    //     ]
+    //     $manager->flush();
 
-    }
+    // }
 
     public function loadEmprunteur(ObjectManager $manager, FakerGenerator $faker): void
     {
@@ -106,7 +106,7 @@ class TestFixtures extends Fixture
                 'actif' => 'true',
                 'created_at' => '20200101 10:00:00',
                 'updated_at' =>'20200101 10:00:00'
-            ]
+            ],
             [
                 'nom' => 'bar',
                 'prenom' => 'bar',
@@ -114,7 +114,7 @@ class TestFixtures extends Fixture
                 'actif' => 'false',
                 'created_at' => '20200201 11:00:00',
                 'updated_at' =>'20200501 12:00:00'
-            ]
+            ],
             [
                 'nom' => 'baz',
                 'prenom' => 'baz',
@@ -123,9 +123,9 @@ class TestFixtures extends Fixture
                 'created_at' => '20200301 12:00:00',
                 'updated_at' =>'20200301 12:00:00'
             ]
-        ]
-        $manager->flush();
-
+            ];
+        
+            $manager->flush();
     }
 
     public function loadGenres(ObjectManager $manager, FakerGenerator $faker): void
@@ -182,26 +182,26 @@ class TestFixtures extends Fixture
                 'annee_edition' => '2010',
                 'nombre_pages' => '100',
                 'code_isbn' => '9785786930024'
-            ]
+            ],
             [
                 'titre' => 'Consectetur adipiscing elit',
                 'annee_edition' => '2011',
                 'nombre_pages' => '150',
                 'code_isbn' => '9783817260935'
-            ]
+            ],
             [
                 'titre' => 'Mihi quidem Antiochum',
                 'annee_edition' => '2012',
                 'nombre_pages' => '200',
                 'code_isbn' => '9782020493727'
-            ]
+            ],
             [
                 'titre' => 'Quem audis satis belle',
                 'annee_edition' => '2013',
                 'nombre_pages' => '250',
                 'code_isbn' => '9794059561353'
             ]
-        ]
+            ];
         $manager->flush();
     }
 
@@ -215,7 +215,7 @@ class TestFixtures extends Fixture
                 'enabled' => 'true',
                 'created_at' => '20200101 09:00:00',
                 'updated_at' => '20200101 09:00:00'
-            ]
+            ],
             [
                 'email' => 'foo.foo@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
@@ -223,7 +223,7 @@ class TestFixtures extends Fixture
                 'enabled' => 'true',
                 'created_at' => '20200101 10:00:00',
                 'updated_at' => '20200101 10:00:00'
-            ]
+            ],
             [
                 'email' => 'bar.bar@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
@@ -231,7 +231,7 @@ class TestFixtures extends Fixture
                 'enabled' => 'false',
                 'created_at' => '20200201 11:00:00',
                 'updated_at' => '20200501 12:00:00'
-            ]
+            ],
             [
                 'email' => 'baz.baz@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
@@ -241,7 +241,7 @@ class TestFixtures extends Fixture
                 'updated_at' => '20200301 12:00:00'
             ]
 
-        ]
+        ];
         $manager->flush();
     }
 }
