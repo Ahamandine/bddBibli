@@ -77,24 +77,42 @@ class TestFixtures extends Fixture
 
     }
 
-    // public function loadEmprunt(ObjectManager $manager, FakerGenerator $faker): void 
-    // {
-    //     $empruntDatas = 
-    //     [
-    //         'date_emprunt' => '2020-02-01 10:00:00',
-    //         'date_retour' => '2020-02-01 10:00:00'
-    //     ],
-    //     [
-    //         'date_emprunt' => '2020-03-01 10:00:00',
-    //         'date_retour' => '2020-04-01 10:00:00'
-    //     ],
-    //     [
-    //         'date_emprunt' => '2020-04-01 10:00:00',
-    //         'date_retour' => ''
-    //     ]
-    //     $manager->flush();
+    public function loadEmprunt(ObjectManager $manager, FakerGenerator $faker): void 
+    {
+        $empruntDatas = 
+        [        
+            [
+                'date_emprunt' => '2020-02-01 10:00:00',
+                'date_retour' => '2020-02-01 10:00:00'
+            ],
+            [
+                'date_emprunt' => '2020-03-01 10:00:00',
+                'date_retour' => '2020-04-01 10:00:00'
+            ],
+            [
+                'date_emprunt' => '2020-04-01 10:00:00',
+                'date_retour' => ''
+            ]
+        ];
+        
+        foreach ($empruntDatas as $empruntData) {
+            $emprunt = new Emprunt();
+            $emprunt->setDateEmprunt($empruntData['date-emprunt']);
+            $emprunt->setDateRetour($empruntData['date_retour']);
 
-    // }
+            $manager->persist($emprunt);
+        }
+
+        for ($i = 0; $i < 200; $i++) {
+            $emprunt = new Emprunt();
+            $emprunt->setDateEmprunt($faker->dateTime());
+            $emprunt->setDateRetour($faker->dateTime());
+
+            $manager->persist($emprunt);
+        }
+        $manager->flush();
+
+    }
 
     public function loadEmprunteur(ObjectManager $manager, FakerGenerator $faker): void
     {
@@ -125,6 +143,29 @@ class TestFixtures extends Fixture
             ]
             ];
         
+            foreach ($emprunteurDatas as $emprunteurData) {
+                $emprunteur = new Emprunteur();
+                $emprunteur->setLastName($emprunteurData['nom']);
+                $emprunteur->setFirstName($emprunteurData['prenom']);
+                $emprunteur->setPhone($emprunteurData['tel']);
+                $emprunteur->setActif($emprunteurData['actif']);
+                $emprunteur->setCreatedAt($emprunteurData['created_at']);
+                $emprunteur->setUpdatedAt($emprunteurData['updated_at']);
+
+                $manager->persist($emprunteur);
+            },
+            
+            for ($i = 0; $i < 100; $i++) {
+                $emprunteur = new Emprunteur();
+                $emprunteur->setLastName($faker->lastName());
+                $emprunteur->setFirstName($faker->firstName());
+                $emprunteur->setPhone($faker->phoneNumber());
+                $emprunteur->setActif($faker->boolean());
+                $emprunteur->setCreateAt($faker->dateTime());
+                $emprunteur->setUpdatedAt($faker->dateTime());
+
+                $manager->persist($emprunteur);
+            }
             $manager->flush();
     }
 
@@ -171,6 +212,14 @@ class TestFixtures extends Fixture
                 'description' => ''
             ],
         ];
+
+        foreach ($genreDatas as $genreData) {
+            $genre = new Genre();
+            $genre->setName($genreData['nom']);
+            $genre->setDescription($genreData['description']);
+
+            $manager->persist($genre)
+        }
         $manager->flush();
     }
 
@@ -201,7 +250,28 @@ class TestFixtures extends Fixture
                 'nombre_pages' => '250',
                 'code_isbn' => '9794059561353'
             ]
-            ];
+        ];
+
+        foreach ($livreDatas as $livreData) {
+            $livre = new Livre();
+            $livre->setTitle($livreData['titre']);
+            $livre->setYear($livreData['annee_edition']);
+            $livre->setNumberPages($livreData['nombre_pages']);
+            $livre->setCodeIsbn($livreData['code_isbn']);
+
+            $manager->persist($livre);
+        }
+
+        for ($i = 0; $i < 1000; $i++) {
+            $livre = new Livre();
+            $livre->setTitle($faker->sentence());
+            $livre->setYear($faker->year());
+            $livre->setNumberPages($faker->randomNumber(3, true));
+            $livre->setCodeIsbn($faker->randomNumber(13, true));
+
+            $manager->persist($livre);
+        }
+
         $manager->flush();
     }
 
@@ -242,6 +312,30 @@ class TestFixtures extends Fixture
             ]
 
         ];
+
+        foreach ($userDatas as $userData) {
+            $user =  new User();
+            $user->setEmail($userData['email']);
+            $user->setRoles($userData['roles']);
+            $user->setPassword($userData['password']);
+            $user->setEnabled($userData['enabled']);
+            $user->setCreatedAt($userData['created_at']);
+            $user->setUpdatedAt($userData['updated_at']);
+
+            $manager->persist($user);
+        }
+
+        for ($i = 0; $i < 100; $i++) {
+            $user = new User();
+            $user->setEmail($faker->safeEmail());
+            $user->setRoles(['ROLE_EMPRUNTEUR']);
+            $user->setPassword($faker->password());
+            $user->setEnabled($faker->boolean());
+            $user->setCreatedAt($faker->dateTime());
+            $user->setUpdatedAt($faker->dateTime());
+
+            $manager->persist($user);
+        }
         $manager->flush();
     }
 }
