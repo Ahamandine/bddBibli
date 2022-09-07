@@ -31,7 +31,7 @@ class TestFixtures extends Fixture
         $this->loadGenres($manager,$faker);
         $this->loadAuteur($manager, $faker);
         $this->loadLivre($manager, $faker);    
-        $this->loadUser($manager, $faker);
+        $this->loadUserEmprunteur($manager, $faker);
         // $this->loadEmprunteur($manager, $faker);
         // $this->loadEmprunt($manager, $faker);
     }
@@ -111,61 +111,6 @@ class TestFixtures extends Fixture
         }
         $manager->flush();
 
-    }
-
-    public function loadEmprunteur(ObjectManager $manager, FakerGenerator $faker): void
-    {
-        $emprunteurDatas = [
-            [
-                'nom' => 'foo',
-                'prenom' => 'foo',
-                'tel' => '123456789',
-                'actif' => 'true',
-                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 10:00:00'),
-                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 10:00:00')
-            ],
-            [
-                'nom' => 'bar',
-                'prenom' => 'bar',
-                'tel' => '123456789',
-                'actif' => 'false',
-                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200201 11:00:00'),
-                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200501 12:00:00')
-            ],
-            [
-                'nom' => 'baz',
-                'prenom' => 'baz',
-                'tel' => '123456789',
-                'actif' => 'true',
-                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00'),
-                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00')
-            ]
-            ];
-        
-            foreach ($emprunteurDatas as $emprunteurData) {
-                $emprunteur = new Emprunteur();
-                $emprunteur->setNom($emprunteurData['nom']);
-                $emprunteur->setPrenom($emprunteurData['prenom']);
-                $emprunteur->setTel($emprunteurData['tel']);
-                $emprunteur->setActif($emprunteurData['actif']);
-                $emprunteur->setCreatedAt($emprunteurData['created_at']);
-                $emprunteur->setUpdatedAt($emprunteurData['updated_at']);
-
-                $manager->persist($emprunteur);
-            }
-            
-            for ($i = 0; $i < 100; $i++) {
-                $emprunteur = new Emprunteur();
-                $emprunteur->setNom($faker->lastName());
-                $emprunteur->setPrenom($faker->firstName());
-                $emprunteur->setTel($faker->phoneNumber());
-                $emprunteur->setActif($faker->boolean());
-                $emprunteur->setCreateAt($faker->dateTime());
-                $emprunteur->setUpdatedAt($faker->dateTime());
-
-                $manager->persist($emprunteur);
-            }
-            $manager->flush();
     }
 
     public function loadGenres(ObjectManager $manager, FakerGenerator $faker): void
@@ -309,7 +254,7 @@ class TestFixtures extends Fixture
 
     public function loadUserEmprunteur(ObjectManager $manager, FakerGenerator $faker):void
     {
-        $userDatas = [
+        $emprunteurDatas = [
             [
                 'email' => 'admin@example.com',
                 'roles' => 'ROLE_ADMIN',
@@ -319,6 +264,10 @@ class TestFixtures extends Fixture
                 'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 09:00:00')
             ],
             [
+                'nom' => 'foo',
+                'prenom' => 'foo',
+                'tel' => '123456789',
+                'actif' => 'true',
                 'email' => 'foo.foo@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
                 'password' => '$2y$10$/H2ChUxriH.0Q33g3EUEx.S2s4j/rGJH2G88jK9nCP60GbUW8mi5K',
@@ -327,6 +276,10 @@ class TestFixtures extends Fixture
                 'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 10:00:00')
             ],
             [
+                'nom' => 'bar',
+                'prenom' => 'bar',
+                'tel' => '123456789',
+                'actif' => 'false',
                 'email' => 'bar.bar@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
                 'password' => '$2y$10$/H2ChUxriH.0Q33g3EUEx.S2s4j/rGJH2G88jK9nCP60GbUW8mi5K',
@@ -335,6 +288,10 @@ class TestFixtures extends Fixture
                 'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200501 12:00:00')
             ],
             [
+                'nom' => 'baz',
+                'prenom' => 'baz',
+                'tel' => '123456789',
+                'actif' => 'true',
                 'email' => 'baz.baz@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
                 'password' => '$2y$10$/H2ChUxriH.0Q33g3EUEx.S2s4j/rGJH2G88jK9nCP60GbUW8mi5K',
@@ -342,19 +299,29 @@ class TestFixtures extends Fixture
                 'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00'),
                 'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00')
             ]
-
         ];
 
-        foreach ($userDatas as $userData) {
+        foreach ($emprunteurDatas as $emprunteurData) {
             $user =  new User();
-            $user->setEmail($userData['email']);
-            $user->setRoles($userData['roles']);
-            $user->setPassword($userData['password']);
-            $user->setEnabled($userData['enabled']);
-            $user->setCreatedAt($userData['created_at']);
-            $user->setUpdatedAt($userData['updated_at']);
+            $user->setEmail($emprunteurData['email']);
+            $user->setRoles($emprunteurData['roles']);
+            $password = $this->hasher->hashPassword($user, $emprunteurData['password']);
+            $user->setEnabled($emprunteurData['enabled']);
+            $user->setCreatedAt($emprunteurData['created_at']);
+            $user->setUpdatedAt($emprunteurData['updated_at']);
 
             $manager->persist($user);
+
+            $emprunteur = new Emprunteur();
+            $emprunteur->setUser($user);
+            $emprunteur->setNom($emprunteurData['nom']);
+            $emprunteur->setPrenom($emprunteurData['prenom']);
+            $emprunteur->setTel($emprunteurData['tel']);
+            $emprunteur->setActif($emprunteurData['actif']);
+            $emprunteur->setCreatedAt($emprunteurData['created_at']);
+            $emprunteur->setUpdatedAt($emprunteurData['updated_at']);
+
+            $manager->persist($emprunteur);
         }
 
         for ($i = 0; $i < 100; $i++) {
@@ -367,6 +334,18 @@ class TestFixtures extends Fixture
             $user->setUpdatedAt($faker->dateTime());
 
             $manager->persist($user);
+
+            $emprunteur = new Emprunteur();
+            $emprunteur->setUser($user);
+            $emprunteur->setNom($faker->lastName());
+            $emprunteur->setPrenom($faker->firstName());
+            $emprunteur->setTel($faker->phoneNumber());
+            $emprunteur->setActif($faker->boolean());
+            $emprunteur->setCreateAt($faker->dateTime());
+            $emprunteur->setUpdatedAt($faker->dateTime());
+
+            $manager->persist($emprunteur);
+
         }
         $manager->flush();
     }
