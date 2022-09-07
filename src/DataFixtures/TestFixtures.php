@@ -10,7 +10,7 @@ use App\Entity\Emprunteur;
 use App\Entity\Genre;
 use App\Entity\Livre;
 use App\Entity\User;
-use DateTime;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
@@ -28,11 +28,12 @@ class TestFixtures extends Fixture
     {
         $faker = FakerFactory::create('fr_FR');
 
+        $this->loadGenres($manager,$faker);
         $this->loadAuteur($manager, $faker);
-        $this->loadEmprunt($manager, $faker);
-        $this->loadEmprunteur($manager, $faker);
-        $this->loadLivre($manager, $faker);
+        $this->loadLivre($manager, $faker);    
         $this->loadUser($manager, $faker);
+        // $this->loadEmprunteur($manager, $faker);
+        // $this->loadEmprunt($manager, $faker);
     }
 
     public function loadAuteur(ObjectManager $manager, FakerGenerator $faker): void 
@@ -58,16 +59,16 @@ class TestFixtures extends Fixture
 
         foreach ($auteurDatas as $auteurData) {
             $auteur = new Auteur();
-            $auteur->setLastName($auteurData['nom']);
-            $auteur->setFirstName($auteurData['prenom']);
+            $auteur->setNom($auteurData['nom']);
+            $auteur->setPrenom($auteurData['prenom']);
 
             $manager->persist($auteur);
         }
 
         for($i = 0; $i < 500; $i++) {
             $auteur = new Auteur();
-            $auteur->setLastName($faker->lastName());
-            $auteur->setFirstName($faker->firstName());
+            $auteur->setNom($faker->lastName());
+            $auteur->setPrenom($faker->firstName());
             $manager->persist($auteur);
         }
 
@@ -80,22 +81,22 @@ class TestFixtures extends Fixture
         $empruntDatas = 
         [        
             [
-                'date_emprunt' => '2020-02-01 10:00:00',
-                'date_retour' => '2020-02-01 10:00:00'
+                'date_emprunt' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','2020-02-01 10:00:00'),
+                'date_retour' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','2020-02-01 10:00:00')
             ],
             [
-                'date_emprunt' => '2020-03-01 10:00:00',
-                'date_retour' => '2020-04-01 10:00:00'
+                'date_emprunt' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','2020-03-01 10:00:00'),
+                'date_retour' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','2020-04-01 10:00:00')
             ],
             [
-                'date_emprunt' => '2020-04-01 10:00:00',
+                'date_emprunt' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','2020-04-01 10:00:00'),
                 'date_retour' => ''
             ]
         ];
         
         foreach ($empruntDatas as $empruntData) {
             $emprunt = new Emprunt();
-            $emprunt->setDateEmprunt($empruntData['date-emprunt']);
+            $emprunt->setDateEmprunt($empruntData['date_emprunt']);
             $emprunt->setDateRetour($empruntData['date_retour']);
 
             $manager->persist($emprunt);
@@ -120,44 +121,44 @@ class TestFixtures extends Fixture
                 'prenom' => 'foo',
                 'tel' => '123456789',
                 'actif' => 'true',
-                'created_at' => '20200101 10:00:00',
-                'updated_at' =>'20200101 10:00:00'
+                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 10:00:00'),
+                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 10:00:00')
             ],
             [
                 'nom' => 'bar',
                 'prenom' => 'bar',
                 'tel' => '123456789',
                 'actif' => 'false',
-                'created_at' => '20200201 11:00:00',
-                'updated_at' =>'20200501 12:00:00'
+                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200201 11:00:00'),
+                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200501 12:00:00')
             ],
             [
                 'nom' => 'baz',
                 'prenom' => 'baz',
                 'tel' => '123456789',
                 'actif' => 'true',
-                'created_at' => '20200301 12:00:00',
-                'updated_at' =>'20200301 12:00:00'
+                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00'),
+                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00')
             ]
             ];
         
             foreach ($emprunteurDatas as $emprunteurData) {
                 $emprunteur = new Emprunteur();
-                $emprunteur->setLastName($emprunteurData['nom']);
-                $emprunteur->setFirstName($emprunteurData['prenom']);
-                $emprunteur->setPhone($emprunteurData['tel']);
+                $emprunteur->setNom($emprunteurData['nom']);
+                $emprunteur->setPrenom($emprunteurData['prenom']);
+                $emprunteur->setTel($emprunteurData['tel']);
                 $emprunteur->setActif($emprunteurData['actif']);
                 $emprunteur->setCreatedAt($emprunteurData['created_at']);
                 $emprunteur->setUpdatedAt($emprunteurData['updated_at']);
 
                 $manager->persist($emprunteur);
-            },
+            }
             
             for ($i = 0; $i < 100; $i++) {
                 $emprunteur = new Emprunteur();
-                $emprunteur->setLastName($faker->lastName());
-                $emprunteur->setFirstName($faker->firstName());
-                $emprunteur->setPhone($faker->phoneNumber());
+                $emprunteur->setNom($faker->lastName());
+                $emprunteur->setPrenom($faker->firstName());
+                $emprunteur->setTel($faker->phoneNumber());
                 $emprunteur->setActif($faker->boolean());
                 $emprunteur->setCreateAt($faker->dateTime());
                 $emprunteur->setUpdatedAt($faker->dateTime());
@@ -213,59 +214,92 @@ class TestFixtures extends Fixture
 
         foreach ($genreDatas as $genreData) {
             $genre = new Genre();
-            $genre->setName($genreData['nom']);
+            $genre->setNom($genreData['nom']);
             $genre->setDescription($genreData['description']);
 
-            $manager->persist($genre)
+            $manager->persist($genre);
         }
         $manager->flush();
     }
 
     public function loadLivre(ObjectManager $manager, FakerGenerator $faker): void
     {
+        $repository = $this->doctrine->getRepository(Auteur::class);
+        $auteur = $repository->findAll();
+
+        $repository = $this->doctrine->getRepository(Genre::class);
+        $genres = $repository->findAll();
+
+
+
         $livreDatas = [
             [
                 'titre' => 'Lorem ipsum dolor sit amet',
                 'annee_edition' => '2010',
                 'nombre_pages' => '100',
-                'code_isbn' => '9785786930024'
+                'code_isbn' => '9785786930024',
+                'auteur' => $auteur[0],
+                'genre' => [$genres[0]]
             ],
             [
                 'titre' => 'Consectetur adipiscing elit',
                 'annee_edition' => '2011',
                 'nombre_pages' => '150',
-                'code_isbn' => '9783817260935'
+                'code_isbn' => '9783817260935',
+                'auteur' => $auteur[1],
+                'genre' => [$genres[1]]
             ],
             [
                 'titre' => 'Mihi quidem Antiochum',
                 'annee_edition' => '2012',
                 'nombre_pages' => '200',
-                'code_isbn' => '9782020493727'
+                'code_isbn' => '9782020493727',
+                'auteur' => $auteur[2],
+                'genre' => [$genres[2]]
             ],
             [
                 'titre' => 'Quem audis satis belle',
                 'annee_edition' => '2013',
                 'nombre_pages' => '250',
-                'code_isbn' => '9794059561353'
+                'code_isbn' => '9794059561353',
+                'auteur' => $auteur[3],
+                'genre' => [$genres[3]]
+
             ]
         ];
 
         foreach ($livreDatas as $livreData) {
             $livre = new Livre();
-            $livre->setTitle($livreData['titre']);
-            $livre->setYear($livreData['annee_edition']);
-            $livre->setNumberPages($livreData['nombre_pages']);
+            $livre->setTitre($livreData['titre']);
+            $livre->setAnneeEdition($livreData['annee_edition']);
+            $livre->setNombrePages($livreData['nombre_pages']);
             $livre->setCodeIsbn($livreData['code_isbn']);
+            // Un livre peut avoir plusieurs genre
+            // Pas d'auteur ici car un livre = un auteur
+            foreach ($livreData['genre'] as $genre) {
+                $livre->addGenre($genre);
+            }
+            $livre->setAuteurs($livreData['auteur']);
 
             $manager->persist($livre);
         }
 
         for ($i = 0; $i < 1000; $i++) {
             $livre = new Livre();
-            $livre->setTitle($faker->sentence());
-            $livre->setYear($faker->year());
-            $livre->setNumberPages($faker->randomNumber(3, true));
-            $livre->setCodeIsbn($faker->randomNumber(13, true));
+            $livre->setTitre($faker->sentence());
+            $livre->setAnneeEdition($faker->year());
+            $livre->setNombrePages($faker->numberBetween(100, 500));
+            $livre->setCodeIsbn($faker->isbn13());
+            // On délimite le nombre d'élèments à ajouter, donc entre 1 & 3
+            $count = random_int(1, 3);
+            $randomGenres = $faker->randomElements($genres, $count);
+            // On fait une boucle pour intégrer plusieurs genres
+            foreach ($randomGenres as $genre) {
+                $livre->addGenre($genre);
+            }
+            $randomAuteur = $faker->randomElement($auteur);
+            $livre->setAuteurs($randomAuteur);
+            
 
             $manager->persist($livre);
         }
@@ -273,7 +307,7 @@ class TestFixtures extends Fixture
         $manager->flush();
     }
 
-    public function loadUser(ObjectManager $manager, FakerGenerator $faker):void
+    public function loadUserEmprunteur(ObjectManager $manager, FakerGenerator $faker):void
     {
         $userDatas = [
             [
@@ -281,32 +315,32 @@ class TestFixtures extends Fixture
                 'roles' => 'ROLE_ADMIN',
                 'password' => '$2y$10$/H2ChUxriH.0Q33g3EUEx.S2s4j/rGJH2G88jK9nCP60GbUW8mi5K',
                 'enabled' => 'true',
-                'created_at' => '20200101 09:00:00',
-                'updated_at' => '20200101 09:00:00'
+                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 09:00:00'),
+                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 09:00:00')
             ],
             [
                 'email' => 'foo.foo@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
                 'password' => '$2y$10$/H2ChUxriH.0Q33g3EUEx.S2s4j/rGJH2G88jK9nCP60GbUW8mi5K',
                 'enabled' => 'true',
-                'created_at' => '20200101 10:00:00',
-                'updated_at' => '20200101 10:00:00'
+                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 10:00:00'),
+                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200101 10:00:00')
             ],
             [
                 'email' => 'bar.bar@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
                 'password' => '$2y$10$/H2ChUxriH.0Q33g3EUEx.S2s4j/rGJH2G88jK9nCP60GbUW8mi5K',
                 'enabled' => 'false',
-                'created_at' => '20200201 11:00:00',
-                'updated_at' => '20200501 12:00:00'
+                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200201 11:00:00'),
+                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200501 12:00:00')
             ],
             [
                 'email' => 'baz.baz@example.com',
                 'roles' => 'ROLE_EMPRUNTEUR',
                 'password' => '$2y$10$/H2ChUxriH.0Q33g3EUEx.S2s4j/rGJH2G88jK9nCP60GbUW8mi5K',
                 'enabled' => 'false',
-                'created_at' => '20200301 12:00:00',
-                'updated_at' => '20200301 12:00:00'
+                'created_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00'),
+                'updated_at' => DateTimeImmutable::createFromFormat('y-m-d H:i:s','20200301 12:00:00')
             ]
 
         ];
