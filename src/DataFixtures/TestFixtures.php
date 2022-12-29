@@ -16,18 +16,24 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 
 class TestFixtures extends Fixture
 {
-    public function __construct(ManagerRegistry $doctrine)
+    private $doctrine;
+    private $faker;
+    private $hasher;
+
+    public function __construct(ManagerRegistry $doctrine, UserPasswordHasherInterface $hasher)
     {
         $this->doctrine = $doctrine;
+        $this->faker = FakerFactory::create('fr_FR');
+        $this->hasher = $hasher;
     }
 
     public function load(ObjectManager $manager): void
     {
-        $faker = FakerFactory::create('fr_FR');
-
         $this->loadGenres($manager,$faker);
         $this->loadAuteur($manager, $faker);
         $this->loadLivre($manager, $faker);    
@@ -326,9 +332,10 @@ class TestFixtures extends Fixture
 
         for ($i = 0; $i < 100; $i++) {
             $user = new User();
-            $user->setEmail($faker->safeEmail());
+            $user->setEmail($this->faker->safeEmail());
             $user->setRoles(['ROLE_EMPRUNTEUR']);
-            $user->setPassword($faker->password());
+            $password = $this->hasher->hashPassword($user, '123');
+            $user->setPassword($password);
             $user->setEnabled($faker->boolean());
             $user->setCreatedAt($faker->dateTime());
             $user->setUpdatedAt($faker->dateTime());
@@ -337,10 +344,10 @@ class TestFixtures extends Fixture
 
             $emprunteur = new Emprunteur();
             $emprunteur->setUser($user);
-            $emprunteur->setNom($faker->lastName());
-            $emprunteur->setPrenom($faker->firstName());
-            $emprunteur->setTel($faker->phoneNumber());
-            $emprunteur->setActif($faker->boolean());
+            $emprunteur->setNom($this->faker->lastName());
+            $emprunteur->setPrenom($this->faker->firstName());
+            $emprunteur->setTel($this->faker->phoneNumber());
+            $emprunteur->setActif(true);
             $emprunteur->setCreateAt($faker->dateTime());
             $emprunteur->setUpdatedAt($faker->dateTime());
 
